@@ -5,12 +5,12 @@ const crypto = require("crypto");
 
 router.post('/add-songs', async(req, res) => {
 	try{ 
-		const {name, type, size, image, lastModified, data, duration} = req.body;
+		const {name, type, size, image, lastModified, data, duration, id} = req.body;
 		console.log(name);
 		const hash = crypto.createHash("md5").update(data).digest("hex");
 		const song = await Song.findOne({hash});
 		if(song) return res.status(200).json({message: "song already exists"});
-		const new_song = await Song.create({name, type, size, image, lastModified, data, hash, duration});
+		const new_song = await Song.create({name, type, size, image, lastModified, data, hash, duration, user: id});
 		res.status(201).json({message: "Song added sucessfully"});
 	} catch (err) {
 		console.log(err);
@@ -20,7 +20,7 @@ router.post('/add-songs', async(req, res) => {
 
 router.get('/get-songs', async (req, res) => {
 	try{
-		const song = await Song.find().select("-data");
+		const song = await Song.find().select("-data").populate("user", "username");
 		res.status(200).json(song);
 	} catch (err) {
 		res.status(500).json({ error: err.message});

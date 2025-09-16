@@ -32,7 +32,7 @@ function App() {
         </div>
         <div className='h-full w-full p-2 md:p-0 md:py-2 md:mr-2 flex flex-row gap-2 overflow-auto'>
           
-          {musicBase64?.hash &&
+          {musicBase64?.name &&
           <div className={`fixed inset-0 top-auto bottom-18 right-2 left-auto sm:relative sm:top-0 sm:bottom-0 sm:right-0 sm:left-0 ${close ? "h-fit" : "h-100"} sm:h-full w-[65%] sm:w-[40%] md:w-[25%] bg-zinc-900 sm:bg-zinc-900/80 rounded-md`}>
             <CurrentProfile 
               addSongs={songs}

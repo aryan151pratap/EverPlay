@@ -1,10 +1,13 @@
 const api = import.meta.env.VITE_BACKEND_ADD;
 
+const id = localStorage.getItem("id");
+
 export const addSong = async function(data){
 	try{
 		console.log("middleware add songs ", data);
 		const new_data = {
-			...data, image: data.image?.base64
+			...data, image: data.image?.base64,
+			id
 		}
 		const res = await fetch(`${api}/song/add-songs`, {
 			method: 'POST',

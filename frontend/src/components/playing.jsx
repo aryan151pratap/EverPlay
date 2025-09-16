@@ -18,6 +18,7 @@ const Playing = function({musicBase64, setMusicBase64}){
 	const [isLooping, setIsLooping] = useState(false);
 	const [currentAudio, setCurrentAudio] = useState(null);
 	const [loading, setLoading] = useState(false);
+
 	useEffect(() => {
 
 		const get_song = async function(){
@@ -37,8 +38,12 @@ const Playing = function({musicBase64, setMusicBase64}){
 		const audio = audioRef.current;
 		if(!audio) return;
 
-		if(musicBase64._id && !musicBase64.data){
-			get_song();
+		if(musicBase64._id){
+			if(!musicBase64.data){
+				get_song();
+			}
+		} else if(musicBase64?.data){
+			setCurrentAudio(musicBase64.data);
 		}
 
 		const updateTime = () => {
@@ -61,9 +66,10 @@ const Playing = function({musicBase64, setMusicBase64}){
 	useEffect(() => {
 		const audio = audioRef.current;
 		if(!audio) return;
-		if(audio){
+		if(currentAudio){
 			setMusicBase64((e) => ({...e, play: true}));
 		}
+		
 	}, [currentAudio])
 
 
@@ -78,6 +84,7 @@ const Playing = function({musicBase64, setMusicBase64}){
 		} else {
 			audio.pause();
 		}
+		console.log(musicBase64);
 	}, [musicBase64.play]);
 
 
@@ -142,7 +149,7 @@ const Playing = function({musicBase64, setMusicBase64}){
 					<div className="h-8 w-8 p-2 text-black bg-white rounded-full cursor-pointer"
 						onClick={handlePlay}
 					>
-						{musicBase64.play ?
+						{musicBase64?.play ?
 						<FaPause className=""/>
 						:
 						<FaPlay className=""/>

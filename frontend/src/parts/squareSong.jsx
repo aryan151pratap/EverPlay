@@ -25,9 +25,12 @@ const Square = function({details, musicBase64, setMusicBase64}){
 				</div>
 			</div>
 			<div className="w-full flex flex-row items-center gap-2 overflow-hidden">
-				<div className="p-2 sm:text-sm text-xs flex flex-col">
+				<div className="p-2 bg-white/4 w-full sm:text-sm text-xs flex flex-col">
 					<span className="line-clamp-1 hover:underline cursor-pointer">{details.name}</span>
-					<span>{details.duration} min</span>
+					<div className="flex flex-row justify-between">
+						<span className="hover:underline cursor-pointer">{details.user.username}</span>
+						<span>{details.duration} min</span>
+					</div>
 				</div>
 				
 			</div>

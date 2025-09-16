@@ -75,7 +75,7 @@ const Profile = function({addSongs, setMusicBase64, musicBase64, user}){
 							<span className="p-3 bg-white/6 rounded-md">{user.username}</span>
 							<div className="ml-auto flex flex-wrap gap-2 items-center">
 								<span>color</span>
-								<input type="text" value={color} className="sm:w-fit w-20 outline-none bg-white/10 rounded-md px-2 p-1 border border-white/30 focus:border-white/60"
+								<input type="text" value={color} className="sm:w-20 w-20 outline-none bg-white/10 rounded-md px-2 p-1 border border-white/30 focus:border-white/60"
 									onChange={(e) => setColor(e.target.value)}
 								/>
 								{color !== user?.color &&
