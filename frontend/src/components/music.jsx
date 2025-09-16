@@ -1,15 +1,18 @@
 import Song from "../parts/song";
 import Profile from "../profileShowing/profile";
 
-const Music = function({songs, musicBase64, setMusicBase64}){
+const Music = function({songs, musicBase64, setMusicBase64, user}){
 
 	return(
 		<div className="h-full">
 
-			<div className="h-full flex flex-col rounded-md overflow-hidden">
+			<div className="h-full flex flex-col rounded-md bg-zinc-900/80 overflow-hidden">
+
+				{user &&
 				<div className="">
-					<Profile addSongs={songs}/>
+					<Profile addSongs={songs} user={user}/>
 				</div>
+				}
 
 				<div className="h-full flex flex-col gap-2 p-2 overflow-auto scrollbar-custom">
 					{songs.map((i, index) => (

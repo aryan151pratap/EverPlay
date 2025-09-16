@@ -6,14 +6,14 @@ import user from '../user.js';
 const CurrentProfile = function({addSongs, setMusicBase64, musicBase64, close, setClose}){
 
 	return(
-		<div className={`h-full w-full p-1 flex flex-col gap-1 bg-gradient-to-b from-${user.color}-400/40 via-${user.color}-400/20 to-${user.color}-800/0 rounded-md overflow-auto scrollbar-custom`}>
+		<div className={`shrink-0 h-full w-full p-1 flex flex-col gap-1 bg-gradient-to-b from-${user.color}-400/40 via-${user.color}-400/20 to-${user.color}-800/0 rounded-md overflow-auto scrollbar-custom`}>
 			
 			<div className="">
-				{musicBase64.data &&
+				{musicBase64.name &&
 				<div className="shrink-0 rounded-md bg-black overflow-hidden cursor-pointer flex flex-row p-1 gap-2 md:gap-4">
 					<div className="relative shrink-0 w-15 h-15 rounded-md overflow-hidden">
 						{musicBase64.image ?
-						<img src={musicBase64.image?.base64} alt="" className="w-full h-full object-cover"/>
+						<img src={musicBase64.image?.base64 || musicBase64.image} alt="" className="w-full h-full object-cover"/>
 						:
 						<div className="w-full h-full bg-black ">
 						</div>
@@ -31,7 +31,7 @@ const CurrentProfile = function({addSongs, setMusicBase64, musicBase64, close, s
 					</div>
 
 					<div className="flex flex-col text-xs justify-center">
-						<span className="p-1 bg-zinc-400/30 rounded-sm line-clamp-2">{musicBase64.name.replaceAll("_", " ")}</span>
+						<span className="sm:p-1 p-0.5 bg-zinc-400/30 rounded-sm line-clamp-2">{musicBase64.name.replaceAll("_", " ")}</span>
 						<span className="">{musicBase64.size}</span>
 					</div>
 					<div className="shrink-0 w-15 h-15 relative ml-auto">
@@ -75,10 +75,10 @@ const CurrentProfile = function({addSongs, setMusicBase64, musicBase64, close, s
 				{addSongs?.length > 0 &&
 				<div className="p-1 bg-white/10 rounded-md">
 					<div className="text-sm px-3 p-1 rounded-md bg-white/10">Related Songs</div>
-					<div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 gap-2 py-2">
+					<div className="grid grid-cols-2 sm:grid-cols-1 lg:grid-cols-2 gap-2 py-2">
 						{addSongs?.slice(0,4).map((i, index) => (
 							<div key={index} className="w-full h-40 sm:h-full flex flex-col sm:flex-row gap-2 items-center justify-center bg-white/10 rounded-md p-1">
-								<div className="shrink-0 w-full sm:w-20 h-20 rounded-md overflow-hidden">
+								<div className="xl:shrink-0 md:shrink-1 shrink-0 w-full sm:w-20 h-20 rounded-md overflow-hidden">
 									{i.image?.base64 ?
 										<img src={i?.image?.base64} alt="" className="w-full h-20 object-cover rounded-md bg-black/20"/>
 										:
@@ -86,16 +86,17 @@ const CurrentProfile = function({addSongs, setMusicBase64, musicBase64, close, s
 									}
 								</div>
 
-								<div className="w-full h-16 sm:h-20 flex flex-col">
+								<div className="md:shrink-2 w-full h-16 sm:h-20 flex flex-col">
 									<span className="text-xs text-wrap truncate overflow-hidden hover:underline cursor-pointer">{i.name}</span>
 									<div className="flex flex-row items-center gap-2 ml-auto mt-auto">
 										<FaRegHeart/>
-										<span className="text-xs mt-auto px-2 p-0.5 w-fit ml-auto bg-white/10 rounded-md">{i.duration} min</span>
+										<span className="text-xs mt-auto px-2 p-1.5 w-fit ml-auto bg-white/10 rounded-md">{i.duration} min</span>
 									</div>
 								</div>
 							</div>
 						))}
 					</div>
+					
 					{addSongs?.length > 4 && (
 					<div className="w-full flex bg-gradient-to-t from-white/10 to-white/0 rounded-b-md p-1">
 						<button className="text-white ml-auto text-xs sm:text-sm px-1 p-1 rounded-md hover:underline cursor-pointer">Show More</button>

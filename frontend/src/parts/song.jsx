@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaPlay, FaPause, FaMusic, FaRegHeart, FaHeart } from "react-icons/fa";
 
 export default function Song({ details, setMusicBase64, musicBase64 }) {
-	const isCurrentSong = musicBase64.data === details.data;
+	const isCurrentSong = musicBase64.name === details.name;
 	const isPlaying = musicBase64.play && isCurrentSong;
 	const [like, setLike] = useState(false);
 
@@ -18,7 +18,7 @@ export default function Song({ details, setMusicBase64, musicBase64 }) {
 		<div className="relative w-14 h-14 rounded-md overflow-hidden flex items-center justify-center bg-zinc-700">
 			{details?.image ? (
 			<img
-				src={details.image.base64}
+				src={details.image.base64 || details.image}
 				alt="cover"
 				className="w-full h-full object-cover"
 			/>
@@ -39,11 +39,11 @@ export default function Song({ details, setMusicBase64, musicBase64 }) {
 		</div>
 
 		<div className="flex-1 min-w-0">
-			<p className="font-semibold text-sm truncate text-wrap">
+			<p className="font-semibold text-sm truncate sm:line-clamp-2 sm:text-wrap">
 			{details?.name}
 			</p>
 			<p className="text-xs text-gray-400 truncate">
-			{details?.type} • {details?.size} KB
+			{details?.type} • {details?.size}
 			</p>
 		</div>
 

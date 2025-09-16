@@ -1,12 +1,14 @@
-import { use,useEffect, useRef, useState } from "react";
-import { FaMicrophone, FaUpload } from "react-icons/fa";
+import { use ,useEffect, useRef, useState } from "react";
 import Profile from "../profileShowing/profile";
 import Song from "../parts/song";
 
-const Page1 = function({musicBase64, setMusicBase64, setSongs}){
+import { addSong, getSong } from "../middleware/addSong";
+
+const Page1 = function({musicBase64, setMusicBase64, setSongs, user}){
 	const [addSongs, setAddSongs] = useState([]);
 	const audioRef = useRef(null);
 	const [details, setDetails] = useState(null);
+	const [message, setMessage] = useState(null);
 
 	const format = function(size){
 		return (size / 1024 / 1024).toFixed(2) + " MB"
@@ -95,10 +97,21 @@ const Page1 = function({musicBase64, setMusicBase64, setSongs}){
 		}
 	}
 
-	const handleAdd = function(){
-		if(details){
-			setAddSongs([...addSongs, details]);
-			setDetails(null);
+	const handleAdd = async function(){
+		try{
+			if(details){
+				const res = await addSong(details);
+				if(res.ok){
+					setAddSongs([...addSongs, details]);
+					setDetails(null);
+				} else {
+					console.log(res.ok, res.data);
+				}
+				setMessage(res.data);
+			}
+
+		} catch (err) {
+			console.log(err.message);
 		}
 	}
 
@@ -106,8 +119,8 @@ const Page1 = function({musicBase64, setMusicBase64, setSongs}){
 	return(
 		<div className="h-full w-full bg-black rounded-md overflow-auto scrollbar-hide flex flex-col">
 
-			<div className="sticky inset-0 z-50">
-				<Profile addSongs={addSongs} setMusicBase64={setMusicBase64} musicBase64={musicBase64}/>
+			<div className="sticky inset-0 z-10">
+				<Profile addSongs={addSongs} setMusicBase64={setMusicBase64} musicBase64={musicBase64} user={user}/>
 			</div>
 
 			<div className="h-full md:grid lg:grid-cols-2 bg-zinc-800/40 overflow-auto scrollbar-custom">
@@ -121,11 +134,16 @@ const Page1 = function({musicBase64, setMusicBase64, setSongs}){
 				</div>
 
 				<div className="w-full overflow-auto scrollbar-custom">
-					<div className="flex flex-row gap-2 items-end justify-between p-4">
+					{message &&
+					<div className="flex p-2 ml-auto">
+						<span className={`${message.message ? "text-green-500" : "text-red-500"} text-sm px-2 p-1 bg-white/10 rounded-md ml`}>{message.message ? message.message : message.error}</span>
+					</div>
+					}
+					<div className="flex flex-row gap-2 items-center justify-between p-4">
 						<span className="flex gap-1 items-center">
 							Add Audio on Cloud</span>
 						<input type="file" accept="audio/*" placeholder="audio"
-							className="border border-green-400 focus:border-green-500 rounded-md p-2 text-green-300"
+							className="rounded-md p-2 w-[50%] text-green-500 bg-white/10"
 							onChange={handleAddMusic}
 						/>
 					</div>
@@ -171,7 +189,7 @@ const Page1 = function({musicBase64, setMusicBase64, setSongs}){
 								{details.image &&
 								<div className="w-full text-white">
 									<div className="w-full">
-										<div className="w-full flex flex-col gap-1 border w-fit p-2">
+										<div className="w-full flex flex-col gap-1 bg-white/10 rounded-md w-fit p-2">
 											<span> <span>Name</span> {details.image.name}</span>
 											<span> <span>size</span> {details.image.size}</span>
 											<span> <span>type</span> {details.image.type}</span>

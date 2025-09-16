@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FaVolumeMute, FaVolumeDown, FaVolumeUp, FaPlay, FaRandom, FaRedo, FaDownload, FaPause } from "react-icons/fa";
+import { getAudio } from "../middleware/addSong";
 
 const formatTime = (time) => {
   if (isNaN(time)) return "0:00";
@@ -15,13 +16,29 @@ const Playing = function({musicBase64, setMusicBase64}){
 	const [volume, setVolume] = useState(0.5);
 	const [mute, setMute] = useState(false);
 	const [isLooping, setIsLooping] = useState(false);
-	
+	const [currentAudio, setCurrentAudio] = useState(null);
+	const [loading, setLoading] = useState(false);
 	useEffect(() => {
+
+		const get_song = async function(){
+			try{
+				setLoading(true);
+				const res = await getAudio(musicBase64._id);
+				if(res.ok){
+					setCurrentAudio(res.data.data);
+				}
+			} catch (err) {
+				console.log(err.message);
+			} finally {
+				setLoading(false);
+			}
+		}
+
 		const audio = audioRef.current;
 		if(!audio) return;
 
-		if(musicBase64.data){
-			setMusicBase64((e) => ({...e, play: true}));
+		if(musicBase64._id && !musicBase64.data){
+			get_song();
 		}
 
 		const updateTime = () => {
@@ -39,7 +56,15 @@ const Playing = function({musicBase64, setMusicBase64}){
 
 		audio.addEventListener("timeupdate", updateTime);
 		audio.addEventListener("loadedmetadata", setMetaData);
-	}, [musicBase64.data])
+	}, [musicBase64.name])
+
+	useEffect(() => {
+		const audio = audioRef.current;
+		if(!audio) return;
+		if(audio){
+			setMusicBase64((e) => ({...e, play: true}));
+		}
+	}, [currentAudio])
 
 
 	useEffect(() => {
@@ -93,15 +118,15 @@ const Playing = function({musicBase64, setMusicBase64}){
 	}
 
 	return(
-		<div className="w-full bg-black text-white flex flex-row sm:justify-center p-2 sm:px-4">
+		<div className="w-full bg-black text-white flex flex-row sm:justify-center p-1 sm:px-4 overflow-auto">
 
-			<audio ref={audioRef} src={musicBase64?.data}>
+			<audio ref={audioRef} src={currentAudio}>
 			</audio>
 
 			{musicBase64 &&
-			<div className="shrink-0 flex flex-col text-sm justify-center w-30 md:w-40">
+			<div className="shrink-0 flex flex-col text-sm justify-center w-20 sm:w-30 md:w-40">
 				<span className="font-semibold truncate">{musicBase64.name}</span>
-				<span className="font-semibold">size: {musicBase64.size}</span>
+				<span className="font-semibold text-xs">{musicBase64.size}</span>
 			</div>
 			}
 
@@ -111,6 +136,9 @@ const Playing = function({musicBase64, setMusicBase64}){
 					<div onClick={handleLoop} className={`${isLooping ? "text-white" : "text-slate-400"} h-8 w-8 p-2 rounded-full hover:bg-slate-700 cursor-pointer`}>
 						<FaRedo/>
 					</div>
+					{loading ?
+					<div className="p-3.5 border-2 border-t-transparent rounded-full animate-spin"></div>
+					:
 					<div className="h-8 w-8 p-2 text-black bg-white rounded-full cursor-pointer"
 						onClick={handlePlay}
 					>
@@ -120,6 +148,7 @@ const Playing = function({musicBase64, setMusicBase64}){
 						<FaPlay className=""/>
 						}
 					</div>
+					}
 					
 					<div className={`h-8 w-8 p-2 rounded-full hover:bg-slate-700 cursor-pointer`}>
 						<FaRandom/>
@@ -127,32 +156,34 @@ const Playing = function({musicBase64, setMusicBase64}){
 				</div>
 				
 			
-				<div className="flex flex-row gap-1 items-center text-sm">
-					<span className="text-sm">{formatTime(range)}</span>
+				<div className="flex flex-row gap-1 sm:gap-2 items-center text-sm">
+					<span className="shrink-0 text-sm">{range ? formatTime(range) : "-:--"}</span>
 					<input type="range" min="0" 
-						className="bg-white sm:w-[300px] lg:w-[600px] h-1.5"
+						className="h-[2px] bg-white sm:w-[300px] lg:w-[600px] h-1.5"
 						max={duration} 
 						value={range}
 						onChange={handleSeek}
 					/>
-					<span className="">{formatTime(duration)}</span>
+					<span className="shrink-0">{duration ? formatTime(duration) : "-:--"}</span>
 				</div>
 			</div>
 			<div className="flex items-center">
-				<div className="flex flex-row gap-2 sm:gap-4 items-center">
-					<a href={musicBase64.details?.data} download="music.mp3">
-						<FaDownload className="p-1 text-xl cursor-pointer hover:bg-slate-700 rounded-md" />
-					</a>
+				<div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center">
+					<div className="flex flex-row sm:gap-4 gap-2">
+						<a href={musicBase64.details?.data} download="music.mp3">
+							<FaDownload className="p-1 text-xl cursor-pointer hover:bg-slate-700 rounded-md" />
+						</a>
 
-					<span className="p-1 hover:bg-zinc-700 rounded-full"
-						onClick={handleMute}
-					>
-						{mute ?
-						<FaVolumeMute/>
-						:
-						<FaVolumeUp/>
-						}
-					</span>
+						<span className="p-1 hover:bg-zinc-700 rounded-full"
+							onClick={handleMute}
+						>
+							{mute ?
+							<FaVolumeMute/>
+							:
+							<FaVolumeUp/>
+							}
+						</span>
+					</div>
 
 					<input type="range" min="0" 
 						className="bg-white h-1.5 w-20 sm:w-full"
