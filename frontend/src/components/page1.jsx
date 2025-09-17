@@ -3,6 +3,7 @@ import Profile from "../profileShowing/profile";
 import Song from "../parts/song";
 
 import { addSong, getSong } from "../middleware/addSong";
+import { getUserAllDetails } from "../middleware/addUser";
 
 const Page1 = function({musicBase64, setMusicBase64, setSongs, user}){
 	const [addSongs, setAddSongs] = useState([]);
@@ -72,6 +73,25 @@ const Page1 = function({musicBase64, setMusicBase64, setSongs, user}){
 		}
 	}, [details])
 
+	useEffect(() => {
+		const get_artist = async function(){
+			try{
+				const res = await getUserAllDetails(user._id);
+				if(res.ok){
+					const result = res.data;
+					setAddSongs([...addSongs, ...result.songs]);
+				}
+			} catch (err) {
+				console.log(err.message);
+			}
+		}
+
+		if(user._id){
+			get_artist();
+		}
+
+	}, [user._id])
+
 	const handleInput = function(e){
 		let data = e.target.value;
 		const name = e.target.name;
@@ -102,7 +122,7 @@ const Page1 = function({musicBase64, setMusicBase64, setSongs, user}){
 			if(details){
 				const res = await addSong(details);
 				if(res.ok){
-					setAddSongs([...addSongs, details]);
+					setAddSongs([details, ...addSongs]);
 					setDetails(null);
 				} else {
 					console.log(res.ok, res.data);
@@ -120,7 +140,7 @@ const Page1 = function({musicBase64, setMusicBase64, setSongs, user}){
 		<div className="h-full w-full bg-black rounded-md overflow-auto scrollbar-hide flex flex-col">
 
 			<div className="sticky inset-0 z-10">
-				<Profile addSongs={addSongs} setMusicBase64={setMusicBase64} musicBase64={musicBase64} user={user}/>
+				<Profile addSongs={addSongs} setMusicBase64={setMusicBase64} musicBase64={musicBase64} user={user} edit={true}/>
 			</div>
 
 			<div className="h-full md:grid lg:grid-cols-2 bg-zinc-800/40 overflow-auto scrollbar-custom">

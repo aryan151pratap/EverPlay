@@ -1,3 +1,5 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import { useState } from 'react'
 import './App.css'
 import Page1 from './components/page1'
@@ -9,6 +11,7 @@ import Profile from './profileShowing/profile';
 import CurrentProfile from './profileShowing/currentProfile';
 import TopBar from './bar/topbar';
 import Dashboard from './components/dashboard';
+import Artist from "./components/artist";
 
 function App() {
   const [close, setClose] = useState(false);
@@ -17,6 +20,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [currentTab, setCurrentTab] = useState({icon: <FaUpload/>, name: user?.artist ? 'upload' : 'music'});
   return (
+    <Router>
     <div className='relative flex flex-col h-screen bg-black text-white'>
       <div className='z-50 hidden md:flex'>
         <TopBar setUser={setUser} user={user}/>
@@ -45,33 +49,43 @@ function App() {
           }
           
           <div className={`w-full ${musicBase64?.name && "sm:w-[60%] md:w-[75%]"} h-full rounded-md bg-zinc-900/80`}>
-            {currentTab?.name === 'upload' && user?.artist ?
-            <Page1
-              user={user}
-              musicBase64={musicBase64}
-              setMusicBase64={setMusicBase64}
-              setSongs={setSongs}
-            />
-            :
-            currentTab?.name === 'music' ?
-            <div className='w-full h-full'>
-              <Dashboard
+            <Routes>
+               <Route
+                path="/"
+                element={currentTab?.name === 'upload' && user?.artist ?
+                <Page1
+                  user={user}
+                  musicBase64={musicBase64}
+                  setMusicBase64={setMusicBase64}
+                  setSongs={setSongs}
+                />
+                :
+                currentTab?.name === 'music' ?
+                <div className='w-full h-full'>
+                  <Dashboard
+                    musicBase64={musicBase64}
+                    setMusicBase64={setMusicBase64}
+                  />
+                </div>
+                :
+                <div className='w-full h-full bg-black rounded-md'>
+                  <Music 
+                    user={user}
+                    songs={songs}
+                    musicBase64={musicBase64}
+                    setMusicBase64={setMusicBase64}
+                  />
+                </div>
+              }
+              />
+              <Route path="/profile/:id" element={<Artist user={user}
                 musicBase64={musicBase64}
                 setMusicBase64={setMusicBase64}
+                setCurrentTab={setCurrentTab}
               />
-            </div>
-            :
-            <div className='w-full h-full bg-black rounded-md'>
-              <Music 
-                user={user}
-                songs={songs}
-                musicBase64={musicBase64}
-                setMusicBase64={setMusicBase64}
-              />
-            </div>
-            }
+              }/>
+            </Routes>
           </div>
-
         </div>
       </div>
       
@@ -87,6 +101,7 @@ function App() {
       </div>
 
     </div>
+    </Router>
   )
 }
 

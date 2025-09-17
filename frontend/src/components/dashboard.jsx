@@ -45,17 +45,21 @@ const Dashboard = function({musicBase64, setMusicBase64}){
 					<div className="flex flex-row gap-4 overflow-auto scrollbar-custom">
 						{songs.map((i, index) => 
 							<div key={index}>
-								<Square details={i}
+								<Square 
+									details={i}
 									musicBase64={musicBase64}
 									setMusicBase64={setMusicBase64}
 								/>
 							</div>
 						)}
+
+						{songs.length > 6 &&
 						<div className="sm:p-1">
 							<div className="sm:w-40 sm:h-40 h-full w-30 flex items-center justify-center">
 								<div className="p-4 rounded-full bg-white/10 hover:bg-white/20 cursor-pointer"><FaArrowRight/></div>
 							</div>
 						</div>
+						}
 					</div>
 				</div>
 				}

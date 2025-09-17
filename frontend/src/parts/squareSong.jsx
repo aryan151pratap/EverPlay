@@ -1,4 +1,5 @@
 import { FaMusic, FaPause, FaPlay } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Square = function({details, musicBase64, setMusicBase64}){
 	const handlePlay = function(){
@@ -28,7 +29,11 @@ const Square = function({details, musicBase64, setMusicBase64}){
 				<div className="p-2 bg-white/4 w-full sm:text-sm text-xs flex flex-col">
 					<span className="line-clamp-1 hover:underline cursor-pointer">{details.name}</span>
 					<div className="flex flex-row justify-between">
-						<span className="hover:underline cursor-pointer">{details.user.username}</span>
+						<span className="hover:underline cursor-pointer">
+							<Link to={`/profile/${details.user?._id}`}>
+								{details.user?.username}
+							</Link>
+						</span>
 						<span>{details.duration} min</span>
 					</div>
 				</div>

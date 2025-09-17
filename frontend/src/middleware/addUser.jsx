@@ -33,6 +33,22 @@ export const getUser = async function(id){
 	}
 } 
 
+export const getUserAllDetails = async function(id){
+	try{
+		const res = await fetch(`${api}/user/get-user-details/${id}`, {
+			method: 'GET',
+			headers: { "Content-Type": "application/json" },
+		})
+		const result = {
+			ok: res.ok,
+			data: await res.json(),
+		}
+		return result;
+	} catch (err) {
+		console.log(err.message);
+	}
+} 
+
 export const updateUser = async function(data){
 	try{
 		const res = await fetch(`${api}/user/update-user`, {
@@ -50,7 +66,7 @@ export const updateUser = async function(data){
 	}
 } 
 
-export const logout = async function(id){
+export const deleteAccount = async function(id){
 	try{
 		const res = await fetch(`${api}/user/logout/${id}`, {
 			method: 'GET',

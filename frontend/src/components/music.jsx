@@ -10,7 +10,7 @@ const Music = function({songs, musicBase64, setMusicBase64, user}){
 
 				{user &&
 				<div className="">
-					<Profile addSongs={songs} user={user}/>
+					<Profile addSongs={songs} user={user} edit={false}/>
 				</div>
 				}
 

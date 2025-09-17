@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import { addUser, getUser, logout } from "../middleware/addUser";
+import { addUser, getUser } from "../middleware/addUser";
 import { FaPlay, FaTimes } from "react-icons/fa";
 
 const TopBar = function({ user, setUser }){
@@ -42,10 +42,10 @@ const TopBar = function({ user, setUser }){
 				console.log(res.data);
 				setLogin(false);
 				localStorage.setItem("username", data.username);
-				localStorage.setItem("id", res.data._id);
-				setUser(res.data);
+				localStorage.setItem("id", res.data.data._id);
+				setUser(res.data.data);
 			}
-			setMessage(res.data);
+			setMessage(res.data.message);
 		} catch(err) {
 			console.log(err.message);
 		}
@@ -53,12 +53,9 @@ const TopBar = function({ user, setUser }){
 
 	const handleLogout = async function(){
 		try{
-			const res = await logout(user._id);
-			if(res.ok){
-				setUser(null);
-				localStorage.removeItem("username");
-				localStorage.removeItem("id");
-			}
+			setUser(null);
+			localStorage.removeItem("username");
+			localStorage.removeItem("id");
 		} catch (err) {
 			console.log(err.message);
 		}
@@ -73,10 +70,10 @@ const TopBar = function({ user, setUser }){
 				:
 				user ?
 				<div className="flex flex-col">
-					<div className="ml-auto bg-orange-500 rounded-full p-1 cursor-pointer"
+					<div className="ml-auto rounded-full p-1 cursor-pointer"
 					 onClick={() => setShow(!show)}
 					>
-						<span className="p-2">{user.username.split("")[0]}</span>
+						<div className="p-2 h-8 w-8 flex items-center justify-center rounded-full bg-orange-500">{user.username.split("")[0]}</div>
 					</div>
 					{show &&
 					<div className="fixed inset-0 left-auto top-10 right-4 w-fit h-fit bg-white/20 hover:bg-white/30 p-2 rounded-md flex flex-col">

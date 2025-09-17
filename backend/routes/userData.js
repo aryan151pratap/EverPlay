@@ -9,9 +9,28 @@ router.get('/get-user/:id', async (req, res) => {
 		console.log(id);
 		if(!id) return res.status(400).json({message: "Please login"});
 		const user = await User.findOne({_id: id});
-		console.log(user);
 		if(!user) return res.status(401).json({ message: "user Not exists"});
 		res.status(200).json(user);
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({ error: err.message});
+	}
+});
+
+router.get('/get-user-details/:id', async (req, res) => {
+	try{
+		const {id} = req.params;
+		if(!id) return res.status(400).json({message: "Please login"});
+		const user = await User.findOne({_id: id})
+		.populate({
+			path: "songs",
+			select: "-data",     
+			options: { limit: 6, sort: { createdAt: -1 } }
+  		});
+		console.log("user details");
+		if(!user) return res.status(401).json({ message: "user Not exists"});
+		res.status(200).json(user);
+
 	} catch (err) {
 		console.log(err);
 		res.status(500).json({ error: err.message});
@@ -39,10 +58,10 @@ router.post('/add-user', async (req, res) => {
 		if(!username && !email) return res.status(400).json({message: "fill the login form"});
 		const user = await User.findOne({email});
 		console.log(user);
-		if(user) return res.status(401).json({ message: "user already exists"});
+		if(user) return res.status(200).json({ data: user, message: "user already exists"});
 		const new_user = await User.create({email, username, artist});
 		console.log(new_user);
-		res.status(200).json(new_user);
+		res.status(201).json(new_user);
 	} catch (err) {
 		console.log(err);
 		res.status(500).json({ error: err.message});
@@ -52,14 +71,13 @@ router.post('/add-user', async (req, res) => {
 router.post('/update-user', async (req, res) => {
 	try{
 		const {username, image, color, _id} = req.body;
-		console.log(username, artist);
-		const user = await User.findOne({_id});
-		console.log(user);
-		if(user) return res.status(401).json({ message: "user already exists"});
-		const new_user = await User.create({});
-		console.log(new_user);
-		res.status(200).json(new_user);
-	} catch (err) {
+		const user = await User.findOneAndUpdate(
+			_id,
+			{ username, image, color },
+			{ new: true }
+		);
+		res.status(200).json(user);
+	} catch (err) {	
 		console.log(err);
 		res.status(500).json({ error: err.message});
 	}
