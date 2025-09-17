@@ -6,7 +6,6 @@ const crypto = require("crypto");
 router.get('/get-user/:id', async (req, res) => {
 	try{
 		const {id} = req.params;
-		console.log(id);
 		if(!id) return res.status(400).json({message: "Please login"});
 		const user = await User.findOne({_id: id});
 		if(!user) return res.status(401).json({ message: "user Not exists"});
@@ -35,7 +34,6 @@ router.get('/get-user-details/:id/:limit', async (req, res) => {
 				color: user.color
 			}
 		}));
-		console.log("user details");
 		if(!user) return res.status(401).json({ message: "user Not exists"});
 		res.status(200).json({
 			username: user.username,
@@ -70,7 +68,6 @@ router.post('/add-user', async (req, res) => {
 		const {username, email, artist} = req.body;
 		if(!username && !email) return res.status(400).json({message: "fill the login form"});
 		const user = await User.findOne({email});
-		console.log(user);
 		if(user) return res.status(200).json({ data: user, message: "user already exists"});
 		const new_user = await User.create({email, username, artist});
 		console.log(new_user);

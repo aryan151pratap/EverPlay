@@ -36,7 +36,6 @@ router.get('/get-songs', async (req, res) => {
 router.get('/get-audio/:id', async (req, res) => {
 	try{
 		const { id } = req.params;
-		console.log(id);
 		const song = await Song.findOne({_id: id}).select("data");
 		for(let i = 0; i<song.length; i++){
 			console.log(`${i+1} -> `, song[i].name);

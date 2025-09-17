@@ -5,6 +5,7 @@ const app = express();
 const connectDB = require('./db');
 const song = require('./routes/song');
 const user = require('./routes/userData');
+const port = process.env.PORT;
 
 connectDB();
 
@@ -17,6 +18,6 @@ app.use('/song', song);
 app.use('/user', user);
 
 
-app.listen(3000, () => {
+app.listen(port, () => {
 	console.log("Server is Running on 3000 😏");
 })
