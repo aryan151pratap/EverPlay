@@ -33,9 +33,9 @@ export const getUser = async function(id){
 	}
 } 
 
-export const getUserAllDetails = async function(id){
+export const getUserAllDetails = async function(id, limit = 6){
 	try{
-		const res = await fetch(`${api}/user/get-user-details/${id}`, {
+		const res = await fetch(`${api}/user/get-user-details/${id}/${limit}`, {
 			method: 'GET',
 			headers: { "Content-Type": "application/json" },
 		})

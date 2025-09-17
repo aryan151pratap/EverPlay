@@ -55,6 +55,7 @@ function App() {
                 element={currentTab?.name === 'upload' && user?.artist ?
                 <Page1
                   user={user}
+                  setUser={setUser}
                   musicBase64={musicBase64}
                   setMusicBase64={setMusicBase64}
                   setSongs={setSongs}

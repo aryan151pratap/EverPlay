@@ -35,10 +35,11 @@ const Artist = function({user, musicBase64, setMusicBase64, setCurrentTab}){
 			get_artist();
 		}
 
-		setEdit(() => {
-			id === user._id ? true : false
-		})
-
+		if(user?._id){
+			setEdit(() => {
+				id === user._id ? true : false
+			})
+		}
 	}, [id])
 
 

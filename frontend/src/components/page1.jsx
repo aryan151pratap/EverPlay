@@ -5,7 +5,7 @@ import Song from "../parts/song";
 import { addSong, getSong } from "../middleware/addSong";
 import { getUserAllDetails } from "../middleware/addUser";
 
-const Page1 = function({musicBase64, setMusicBase64, setSongs, user}){
+const Page1 = function({musicBase64, setMusicBase64, setSongs, setUser, user}){
 	const [addSongs, setAddSongs] = useState([]);
 	const audioRef = useRef(null);
 	const [details, setDetails] = useState(null);
@@ -45,6 +45,7 @@ const Page1 = function({musicBase64, setMusicBase64, setSongs, user}){
 						...fileInfo,
 						duration: handleDuration(audio.duration),
 						data: base64Data,
+						user
 					}
 					setDetails(music);
 				};
@@ -140,7 +141,7 @@ const Page1 = function({musicBase64, setMusicBase64, setSongs, user}){
 		<div className="h-full w-full bg-black rounded-md overflow-auto scrollbar-hide flex flex-col">
 
 			<div className="sticky inset-0 z-10">
-				<Profile addSongs={addSongs} setMusicBase64={setMusicBase64} musicBase64={musicBase64} user={user} edit={true}/>
+				<Profile addSongs={addSongs} setMusicBase64={setMusicBase64} musicBase64={musicBase64} user={user} setUser={setUser} edit={true}/>
 			</div>
 
 			<div className="h-full md:grid lg:grid-cols-2 bg-zinc-800/40 overflow-auto scrollbar-custom">

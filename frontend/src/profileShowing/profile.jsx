@@ -3,11 +3,12 @@ import Song from "../parts/song";
 import { FaPlus } from "react-icons/fa";
 import { updateUser } from "../middleware/addUser";
 
-const Profile = function({addSongs, setMusicBase64, musicBase64, user, edit}){
+const Profile = function({addSongs, setMusicBase64, musicBase64, user, setUser, edit}){
 	const [current, setCurrent] = useState("0:00");
 	const buttons = ["all", "songs", "lyrics", "phonk"];
 	const [currentTab, setCurrentTab] = useState('all');
 	const [color, setColor] = useState("zinc");
+	const [image, setImage] = useState(null);
 
 	const handleDuration = function(duration){
 		if (!duration || isNaN(duration)) return "0:00";
@@ -36,11 +37,28 @@ const Profile = function({addSongs, setMusicBase64, musicBase64, user, edit}){
 		}
 	}, [user])
 
-	const handleUpdate = async function(){
+	const handleUpdate = async function(image = null){
 		try{
-			const res = await updateUser({color});
+			if(!color && !image) return;
+			const res = await updateUser({color, image});
 			if(res.ok){
 				setUser({...user, color});
+			}
+		} catch (err) {
+			console.log(err.message);
+		}
+	}
+
+	const handleAddImage = function(e){
+		try{
+			const file = e.target.files[0];
+			if(!file) return;
+			const render = new FileReader();
+			render.readAsDataURL(file);
+			render.onloadend = () => {
+				const img = render.result;
+				setImage(img);
+				handleUpdate(img);
 			}
 		} catch (err) {
 			console.log(err.message);
@@ -52,15 +70,25 @@ const Profile = function({addSongs, setMusicBase64, musicBase64, user, edit}){
 
 			<div className={`absolute w-full flex flex-row sm:gap-4 gap-2 p-2`}>
 			
-				{user?.image ?
+				{user?.image || image ?
 					<div className="shrink-0 overflow-hidden">
-						<img src={user.image} alt="" className="sm:w-40 sm:h-40 w-30 h-30 object-cover rounded-md"/>
+						<img src={user.image || image} alt="" className="sm:w-40 sm:h-40 w-30 h-30 object-cover rounded-md"/>
 					</div>
 					:
 					<div className="bg-zinc-900/40 flex items-start rounded-md">
 						<div className="sm:w-40 sm:h-40 w-30 h-30 rounded-md flex items-center justify-center text-sm font-thin">
 							{edit ?
-							<FaPlus className="text-xl font-thin"/>
+							<label className="inline-flex">
+								<input
+									type="file"
+									accept="image/*"
+									onChange={handleAddImage}
+									className="hidden"
+								/>
+								<FaPlus
+									className="text-xl h-12 w-12 p-3 bg-white/10 hover:bg-white/20 rounded-full font-thin cursor-pointer"
+								/>
+							</label>
 							:
 							<span>No Profile</span>
 							}
@@ -80,7 +108,7 @@ const Profile = function({addSongs, setMusicBase64, musicBase64, user, edit}){
 								/>
 								{color !== user?.color &&
 								<button className="text-sm p-1 px-2 bg-white/20 rounded-md"
-									onClick={handleUpdate}
+									onClick={() => handleUpdate()}
 								>Add</button>
 								}
 							</div>

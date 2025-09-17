@@ -84,7 +84,6 @@ const Playing = function({musicBase64, setMusicBase64}){
 		} else {
 			audio.pause();
 		}
-		console.log(musicBase64);
 	}, [musicBase64.play]);
 
 

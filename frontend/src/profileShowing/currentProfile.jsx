@@ -1,13 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaArrowDown, FaArrowUp, FaHeart, FaPause, FaPlay, FaRegHeart } from "react-icons/fa";
 import music_line from "./MusicLines.gif";
-import user from '../user.js';
+import { getUserAllDetails } from "../middleware/addUser.jsx";
 
-const CurrentProfile = function({addSongs, setMusicBase64, musicBase64, close, setClose}){
+const CurrentProfile = function({ setMusicBase64, musicBase64, close, setClose}){
+	const [addSongs, setAddSongs] = useState(null);
+	const [user, setUser] = useState(null);
+
+	useEffect(() => {
+		const get_related_song = async function(){
+			try{
+				const res = await getUserAllDetails(musicBase64.user._id, 4);
+				if(res.ok){
+					const result = res.data;
+					setAddSongs(result.songs);
+					setUser({
+						username: result.username,
+						image: result.image,
+						_id: result._id,
+						color: result.color,
+						createdAt: result.createdAt,
+					})
+				}
+			} catch (err) {
+				console.log(err.message);
+			}
+		}
+
+		if(musicBase64?.user?._id){
+			get_related_song();
+		}
+	}, [musicBase64])
+
 
 	return(
-		<div className={`shrink-0 h-full w-full p-1 flex flex-col gap-1 bg-gradient-to-b from-${user.color}-400/40 via-${user.color}-400/20 to-${user.color}-800/0 rounded-md overflow-auto scrollbar-custom`}>
-			
+		<div className={`shrink-0 h-full w-full p-1 flex flex-col gap-1 bg-gradient-to-b from-${user?.color}-400/40 via-${user?.color}-400/20 to-${user?.color}-800/0 rounded-md overflow-auto scrollbar-custom`}>
 			<div className="">
 				{musicBase64.name &&
 				<div className="shrink-0 rounded-md bg-black overflow-hidden cursor-pointer flex flex-row p-1 gap-2 md:gap-4">
@@ -58,7 +85,7 @@ const CurrentProfile = function({addSongs, setMusicBase64, musicBase64, close, s
 			
 			<div className={`${close ? "hidden sm:flex h-fit" : "flex"} flex-col gap-1`}>
 				<div className="">
-					{user.image ?
+					{user?.image ?
 						<div className="bg-white/10 rounded-md overflow-hidden">
 							<img src={user.image} alt="" className="object-cover"/>
 						</div>
@@ -70,7 +97,7 @@ const CurrentProfile = function({addSongs, setMusicBase64, musicBase64, close, s
 				</div>
 
 				<div className="bg-white/7 p-2 py-4 rounded-md mt-5">
-					<span className="p-3 bg-white/10 text-sm rounded-md hover:underline cursor-pointer">{user.name}</span>
+					<span className="p-3 bg-white/10 text-sm rounded-md hover:underline cursor-pointer">{user?.username}</span>
 				</div>
 				{addSongs?.length > 0 &&
 				<div className="p-1 bg-white/10 rounded-md">

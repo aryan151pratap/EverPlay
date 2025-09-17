@@ -17,19 +17,34 @@ router.get('/get-user/:id', async (req, res) => {
 	}
 });
 
-router.get('/get-user-details/:id', async (req, res) => {
+router.get('/get-user-details/:id/:limit', async (req, res) => {
 	try{
-		const {id} = req.params;
+		const {id, limit} = req.params;
 		if(!id) return res.status(400).json({message: "Please login"});
 		const user = await User.findOne({_id: id})
 		.populate({
 			path: "songs",
 			select: "-data",     
-			options: { limit: 6, sort: { createdAt: -1 } }
+			options: { limit: limit, sort: { createdAt: -1 } }
   		});
+		const mappedSongs = user.songs.map(song => ({
+			...song.toObject(),
+			user: {
+				_id: user._id,
+				username: user.username,
+				color: user.color
+			}
+		}));
 		console.log("user details");
 		if(!user) return res.status(401).json({ message: "user Not exists"});
-		res.status(200).json(user);
+		res.status(200).json({
+			username: user.username,
+			image: user.image,
+			_id: user._id,
+			color: user.color,
+			createdAt: user.createdAt,
+			songs: mappedSongs
+		});
 
 	} catch (err) {
 		console.log(err);
@@ -40,7 +55,6 @@ router.get('/get-user-details/:id', async (req, res) => {
 router.get('/logout/:id', async (req, res) => {
 	try{
 		const {id} = req.params;
-		console.log(id);
 		if(!id) return res.status(400).json({message: "Please login"});
 		const user = await User.findOneAndDelete({_id: id});
 		if(!user) return res.status(401).json({ message: "user Not exists"});
@@ -54,7 +68,6 @@ router.get('/logout/:id', async (req, res) => {
 router.post('/add-user', async (req, res) => {
 	try{
 		const {username, email, artist} = req.body;
-		console.log(username, artist);
 		if(!username && !email) return res.status(400).json({message: "fill the login form"});
 		const user = await User.findOne({email});
 		console.log(user);
@@ -70,12 +83,21 @@ router.post('/add-user', async (req, res) => {
 
 router.post('/update-user', async (req, res) => {
 	try{
-		const {username, image, color, _id} = req.body;
-		const user = await User.findOneAndUpdate(
-			_id,
-			{ username, image, color },
-			{ new: true }
-		);
+		const { image, color, _id} = req.body;
+		let user = {message: "no data saved"};
+		if(image == null){
+			user = await User.findOneAndUpdate(
+				_id,
+				{ color },
+				{ new: true }
+			);
+		} else {
+			user = await User.findOneAndUpdate(
+				_id,
+				{ image },
+				{ new: true }
+			);
+		}
 		res.status(200).json(user);
 	} catch (err) {	
 		console.log(err);
@@ -83,4 +105,4 @@ router.post('/update-user', async (req, res) => {
 	}
 });
 
-module.exports = router;1
+module.exports = router;

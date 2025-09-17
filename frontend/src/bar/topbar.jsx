@@ -18,6 +18,7 @@ const TopBar = function({ user, setUser }){
 				const user_id = localStorage.getItem("id");
 				if(username && user_id){
 					const res = await getUser(user_id);
+					console.log(res);
 					if(res.ok){
 						setUser(res.data);
 					}
@@ -39,11 +40,10 @@ const TopBar = function({ user, setUser }){
 		try{
 			const res = await addUser(data);
 			if(res.ok){
-				console.log(res.data);
 				setLogin(false);
 				localStorage.setItem("username", data.username);
-				localStorage.setItem("id", res.data.data._id);
-				setUser(res.data.data);
+				localStorage.setItem("id", res.data._id);
+				setUser(res.data);
 			}
 			setMessage(res.data.message);
 		} catch(err) {

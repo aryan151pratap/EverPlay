@@ -42,8 +42,11 @@ export default function Song({ details, setMusicBase64, musicBase64 }) {
 			<p className="font-semibold text-sm truncate sm:line-clamp-2 sm:text-wrap">
 			{details?.name}
 			</p>
-			<p className="text-xs text-gray-400 truncate">
+			<p className="flex flex-row gap-5 text-xs text-gray-400 truncate">
 			{details?.type} • {details?.size}
+				<span className="text-xs hover:underline text-white">
+					[{details?.user?.username}]
+				</span>
 			</p>
 		</div>
 

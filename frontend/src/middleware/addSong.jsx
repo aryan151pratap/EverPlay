@@ -49,7 +49,7 @@ export const getSong = async function(){
 
 export const getAudio = async function(id){
 	try{
-		console.log("middleware add songs ");
+		console.log("middleware get songs ");
 		const res = await fetch(`${api}/song/get-audio/${id}`, {
 			method: 'GET',
 			headers: { "Content-Type": "application/json" },
@@ -59,7 +59,6 @@ export const getAudio = async function(id){
 				ok: res.ok,
 				data: await res.json(),
 			}
-			console.log(result);
 			return result;
 		}
 
