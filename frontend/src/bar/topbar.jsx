@@ -42,8 +42,8 @@ const TopBar = function({ user, setUser }){
 			if(res.ok){
 				setLogin(false);
 				localStorage.setItem("username", data.username);
-				localStorage.setItem("id", res.data._id);
-				setUser(res.data);
+				localStorage.setItem("id", res.data.data._id);
+				setUser(res.data.data);
 			}
 			setMessage(res.data.message);
 		} catch(err) {
@@ -73,7 +73,7 @@ const TopBar = function({ user, setUser }){
 					<div className="ml-auto rounded-full p-1 cursor-pointer"
 					 onClick={() => setShow(!show)}
 					>
-						<div className="p-2 h-8 w-8 flex items-center justify-center rounded-full bg-orange-500">{user.username.split("")[0]}</div>
+						<div className="p-2 h-8 w-8 flex items-center justify-center rounded-full bg-orange-500">{user.username?.split("")[0]}</div>
 					</div>
 					{show &&
 					<div className="fixed inset-0 left-auto top-10 right-4 w-fit h-fit bg-white/20 hover:bg-white/30 p-2 rounded-md flex flex-col">

@@ -70,8 +70,7 @@ router.post('/add-user', async (req, res) => {
 		const user = await User.findOne({email});
 		if(user) return res.status(200).json({ data: user, message: "user already exists"});
 		const new_user = await User.create({email, username, artist});
-		console.log(new_user);
-		res.status(201).json(new_user);
+		res.status(201).json({data: new_user});
 	} catch (err) {
 		console.log(err);
 		res.status(500).json({ error: err.message});
